@@ -6,6 +6,7 @@ import dev.rygen.intersectionlightcontroller.services.IntersectionService;
 import dev.rygen.intersectionlightcontroller.services.RoadService;
 import dev.rygen.intersectionlightcontroller.services.LightService;
 import dev.rygen.intersectionlightcontroller.entities.Light;
+import dev.rygen.intersectionlightcontroller.entities.LightConfiguration;
 import dev.rygen.intersectionlightcontroller.entities.Road;
 import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class IntersectionController {
 
     @PostMapping
     public void createIntersection(@RequestBody IntersectionDTO intersectionDto) {
-        List<Road> roads = makeRoads(makeLights(2, false, LightColor.RED), makeLights(2, false, LightColor.RED));
+        List<Road> roads = makeRoads(makeLights(2, true, LightColor.RED), makeLights(2, false, LightColor.RED));
         Intersection intersection = Intersection.builder()
                 .roads(roads)
                 .build();
@@ -42,7 +43,8 @@ public class IntersectionController {
     private List<Light> makeLights(int numLights, boolean active, LightColor color) {
         List<Light> lights = new ArrayList<Light>();
         for (int i = 0; i < numLights; i++) {
-            Light light = Light.builder().active(active).lightColor(color).build();
+            LightConfiguration lightConfiguration = LightConfiguration.builder().redSeconds(5).yellowSeconds(2).greenSeconds(3).build();
+            Light light = Light.builder().active(active).lightColor(color).lightConfiguration(lightConfiguration).build();
             this.lightService.createLight(light);
             lights.add(light);
         }

@@ -2,6 +2,7 @@ package dev.rygen.intersectionlightcontroller.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,6 +13,8 @@ import lombok.Builder;
 
 import java.util.List;
 import java.util.Objects;
+
+import dev.rygen.intersectionlightcontroller.services.LightService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,9 +32,29 @@ public class Intersection {
     private int intersectionId;
 
     @Column(name = "roads")
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Road> roads;
 
     @Column(name = "active")
     private boolean active;
+
+    public void tick(LightService lightService) {
+        for (Road road : this.roads) {
+            road.tick(lightService);
+        }
+    }
+
+    public String lightsString() {
+        String str = "";
+        for (Road road : roads) {
+            str += "[";
+            for (Light light : road.getLights()) {
+                str += "(";
+                str += light.isActive() ? light.getLightColor().name() : "off";
+                str += ")";
+            }
+            str += "]";
+        }
+        return str;
+    }
 }

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import dev.rygen.intersectionlightcontroller.controllers.IntersectionController;
+import dev.rygen.intersectionlightcontroller.entities.Light;
+import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import dev.rygen.intersectionlightcontroller.services.IntersectionService;
 import dev.rygen.intersectionlightcontroller.services.LightService;
 import dev.rygen.intersectionlightcontroller.services.RoadService;
@@ -45,4 +47,49 @@ class IntersectionLightControllerApplicationTests {
 		assertEquals(3, intersectionService.getIntersectionRepository().count());
 	}
 
+	@Test
+	void lightManualCycle() {
+		Light light = Light.builder().active(false).lightColor(LightColor.RED).build();
+		this.lightService.createLight(light);
+
+		assertEquals(LightColor.RED, light.getLightColor());
+		light.advanceColor();
+		assertEquals(LightColor.GREEN, light.getLightColor());
+		light.advanceColor();
+		assertEquals(LightColor.YELLOW, light.getLightColor());
+		light.advanceColor();
+		assertEquals(LightColor.RED, light.getLightColor());
+		light.advanceColor();
+		assertEquals(LightColor.GREEN, light.getLightColor());
+		light.advanceColor();
+		assertEquals(LightColor.YELLOW, light.getLightColor());
+		light.advanceColor();
+	}
+
+	@Test
+	void intersectionAutomaticCycle() {
+		IntersectionController intersectionController = new IntersectionController(intersectionService, roadService, lightService);
+		intersectionController.createIntersection(null);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.GREEN, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.GREEN, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.GREEN, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.YELLOW, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.YELLOW, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+		intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
+		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+	}
 }

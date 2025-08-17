@@ -17,4 +17,8 @@ public class LightService {
     public Light createLight(Light light) {
         return this.lightRepository.save(light);
     }
+
+    public LightRepository getLightRepository() {
+        return this.lightRepository;
+    }
 }

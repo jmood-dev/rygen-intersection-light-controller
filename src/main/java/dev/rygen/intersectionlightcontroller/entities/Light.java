@@ -5,13 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
-import java.util.List;
 import java.util.Objects;
+
+import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,18 +20,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "intersection")
-public class Intersection {
+@Table(name = "light")
+public class Light {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "intersection_id")
-    private int intersectionId;
-
-    @Column(name = "roads")
-    @OneToMany
-    private List<Road> roads;
+    @Column(name = "light_id")
+    private int lightId;
 
     @Column(name = "active")
     private boolean active;
+
+    @Column(name = "light_color")
+    private LightColor lightColor;
 }

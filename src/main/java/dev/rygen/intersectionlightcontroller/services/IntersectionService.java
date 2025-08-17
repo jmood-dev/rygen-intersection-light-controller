@@ -17,4 +17,8 @@ public class IntersectionService {
     public Intersection createIntersection(Intersection intersection) {
         return this.intersectionRepository.save(intersection);
     }
+
+    public IntersectionRepository getIntersectionRepository() {
+        return this.intersectionRepository;
+    }
 }

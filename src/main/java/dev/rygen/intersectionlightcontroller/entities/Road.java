@@ -20,18 +20,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "intersection")
-public class Intersection {
+@Table(name = "road")
+public class Road {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "intersection_id")
-    private int intersectionId;
+    @Column(name = "road_id")
+    private int roadId;
 
-    @Column(name = "roads")
+    @Column(name = "lights")
     @OneToMany
-    private List<Road> roads;
-
-    @Column(name = "active")
-    private boolean active;
+    private List<Light> lights;
 }

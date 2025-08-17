@@ -44,6 +44,15 @@ public class Intersection {
         }
     }
 
+    public void setLightsActive(boolean isActive, LightService lightService) {
+        for (Road road : this.roads) {
+            for (Light light : road.getLights()) {
+                light.setActive(isActive);
+                lightService.getLightRepository().save(light);
+            }
+        }
+    }
+
     public String lightsString() {
         String str = "";
         for (Road road : roads) {

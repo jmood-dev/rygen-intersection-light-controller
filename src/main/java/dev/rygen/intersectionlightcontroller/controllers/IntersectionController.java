@@ -1,6 +1,7 @@
 package dev.rygen.intersectionlightcontroller.controllers;
 
 import dev.rygen.intersectionlightcontroller.dtos.IntersectionDTO;
+import dev.rygen.intersectionlightcontroller.dtos.IntersectionActivationDTO;
 import dev.rygen.intersectionlightcontroller.entities.Intersection;
 import dev.rygen.intersectionlightcontroller.services.IntersectionService;
 import dev.rygen.intersectionlightcontroller.services.RoadService;
@@ -15,6 +16,7 @@ import dev.rygen.intersectionlightcontroller.repositories.IntersectionRepository
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -36,12 +38,24 @@ public class IntersectionController {
         createIntersection(true);
     }
 
-    public void createIntersection(boolean isSynchronized) {
+    @PostMapping("/create")
+    public Intersection createIntersection() {
+        return createIntersection(true);
+    }
+
+    public Intersection createIntersection(boolean isSynchronized) {
         List<Road> roads = makeRoads(makeLights(2, true, LightColor.RED, isSynchronized), makeLights(2, true, LightColor.RED, isSynchronized));
         Intersection intersection = Intersection.builder()
                 .roads(roads)
                 .build();
-        this.intersectionService.createIntersection(intersection);
+        return this.intersectionService.createIntersection(intersection);
+    }
+
+    @PostMapping("/setActive")
+    public void setActive(@RequestBody IntersectionActivationDTO intersectionActivationDTO) {
+        int id = intersectionActivationDTO.intersectionId();
+        Optional<Intersection> intersectionOpt = this.intersectionService.getIntersectionRepository().findById(id);
+        intersectionOpt.ifPresent(intersection -> intersection.setLightsActive(intersectionActivationDTO.isActive(), lightService));
     }
 
     private List<Light> makeLights(int numLights, boolean active, LightColor color, boolean isSynchronized) {

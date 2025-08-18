@@ -1,5 +1,5 @@
 export interface Intersection {
-  id: string;
+  intersectionId: number;
   active: boolean;
   roads: Road[];
 }

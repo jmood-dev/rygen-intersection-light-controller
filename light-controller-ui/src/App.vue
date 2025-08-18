@@ -12,66 +12,17 @@ const handleActiveLightChange = () => {
 }
 
 function addIntersection() {
-  //TODO: refactor to have the backend generate the intersection, then put the result in intersections
-  intersections.value.push({
-    id: crypto.randomUUID(),
-    active: false,
-    roads: [{
-      id: crypto.randomUUID(),
-      lights: [{
-        id: crypto.randomUUID(),
-        active: false,
-        lightColor: LightColor.RED,
-        lightConfiguration: {
-          id: crypto.randomUUID(),
-          redSeconds: 5,
-          yellowSeconds: 2,
-          greenSeconds: 3,
-          isSynchronized: true
-        },
-        secondsOnColor: 0
-      }, {
-        id: crypto.randomUUID(),
-        active: false,
-        lightColor: LightColor.RED,
-        lightConfiguration: {
-          id: crypto.randomUUID(),
-          redSeconds: 5,
-          yellowSeconds: 2,
-          greenSeconds: 3,
-          isSynchronized: true
-        },
-        secondsOnColor: 0
-      }]
-    }, {
-      id: crypto.randomUUID(),
-      lights: [{
-        id: crypto.randomUUID(),
-        active: false,
-        lightColor: LightColor.RED,
-        lightConfiguration: {
-          id: crypto.randomUUID(),
-          redSeconds: 5,
-          yellowSeconds: 2,
-          greenSeconds: 3,
-          isSynchronized: true
-        },
-        secondsOnColor: 0
-      }, {
-        id: crypto.randomUUID(),
-        active: false,
-        lightColor: LightColor.RED,
-        lightConfiguration: {
-          id: crypto.randomUUID(),
-          redSeconds: 5,
-          yellowSeconds: 2,
-          greenSeconds: 3,
-          isSynchronized: true
-        },
-        secondsOnColor: 0
-      }]
-    }]
-  })
+  axios.post('http://localhost:8080/intersections/create')
+    .then(response => {
+      intersections.value.push(response.data);
+    })
+    .catch(console.error)
+}
+
+function setIntersectionActive(intersection:Intersection) {
+  axios.post('http://localhost:8080/intersections/setActive', {isActive: intersection.active, intersectionId: intersection.intersectionId })
+    .then(console.log)
+    .catch(console.error)
 }
 
 function setGreenSeconds(event:Event, road:Road) {
@@ -107,7 +58,7 @@ function setYellowSeconds(event:Event, road:Road) {
     </div>
     <div v-for="intersection in intersections" style="border: 1px black solid;">
       <label>
-        <input type="checkbox" v-model="intersection.active" >
+        <input type="checkbox" v-model="intersection.active" @change="setIntersectionActive(intersection)">
         Active
       </label>
       <div v-for="road in intersection.roads">

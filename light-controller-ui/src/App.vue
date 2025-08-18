@@ -25,24 +25,22 @@ function setIntersectionActive(intersection:Intersection) {
     .catch(console.error)
 }
 
-function setGreenSeconds(event:Event, road:Road) {
+function setColorSeconds(event:Event, intersection:Intersection, road:Road, lightColor:LightColor) {
   let newSeconds = event.target != null ? Number( (event.target as HTMLInputElement)?.value ) : 0
   if (event.target instanceof EventTarget) {
     road.lights.forEach( (light) => {
-      light.lightConfiguration.greenSeconds = newSeconds
+      if (lightColor === LightColor.GREEN)
+        light.lightConfiguration.greenSeconds = newSeconds
+      else if (lightColor === LightColor.YELLOW)
+        light.lightConfiguration.yellowSeconds = newSeconds
     })
   }
+  axios.post("http://localhost:8080/intersections/setSecondsForRoadAndColor", 
+    {intersectionId: intersection.intersectionId, roadId: road.roadId, lightColor: lightColor, seconds: newSeconds})
+    .then(console.log)
+    .catch(console.error)
 }
 
-function setYellowSeconds(event:Event, road:Road) {
-  let newSeconds = event.target != null ? Number( (event.target as HTMLInputElement)?.value ) : 0
-  if (event.target instanceof EventTarget) {
-    road.lights.forEach( (light) => {
-      light.lightConfiguration.yellowSeconds = newSeconds
-    })
-  }
-  
-}
 </script>
 
 <template>
@@ -67,11 +65,11 @@ function setYellowSeconds(event:Event, road:Road) {
         </span>
         <span>
           <label>
-            <input type="text" size="2" @change="setGreenSeconds($event, road)" >
+            <input type="text" size="2" @change="setColorSeconds($event, intersection, road, LightColor.GREEN)" >
             Green Seconds
           </label>
           <label>
-            <input type="text" size="2" @change="setYellowSeconds($event, road)" >
+            <input type="text" size="2" @change="setColorSeconds($event, intersection, road, LightColor.YELLOW)" >
             Yellow Seconds
           </label>
         </span>

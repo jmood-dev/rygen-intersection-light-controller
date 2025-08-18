@@ -52,4 +52,18 @@ public class LightConfiguration implements Serializable {
         }
         return -1; //if this is reached, there was an error
     }
+
+    public void setSecondsForColor(int seconds, LightColor lightColor) {
+        switch (lightColor) {
+            case RED:
+                redSeconds = seconds;
+                break;
+            case YELLOW:
+                yellowSeconds = seconds;
+                break;
+            case GREEN:
+                greenSeconds = seconds;
+                break;
+        }
+    }
 }

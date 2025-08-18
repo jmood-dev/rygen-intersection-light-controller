@@ -5,12 +5,12 @@ export interface Intersection {
 }
 
 export interface Road {
-  id: string;
+  roadId: number;
   lights: Light[];
 }
 
 export interface Light {
-  id: string;
+  lightId: number;
   active: boolean;
   lightColor: LightColor;
   lightConfiguration: LightConfiguration;
@@ -18,7 +18,7 @@ export interface Light {
 }
 
 export interface LightConfiguration {
-  id: string;
+  lightConfigurationId: number;
   redSeconds: number;
   yellowSeconds: number;
   greenSeconds: number;

@@ -1,6 +1,7 @@
 package dev.rygen.intersectionlightcontroller.controllers;
 
 import dev.rygen.intersectionlightcontroller.dtos.IntersectionDTO;
+import dev.rygen.intersectionlightcontroller.dtos.IntersectionRoadSecondsDTO;
 import dev.rygen.intersectionlightcontroller.dtos.IntersectionActivationDTO;
 import dev.rygen.intersectionlightcontroller.entities.Intersection;
 import dev.rygen.intersectionlightcontroller.services.IntersectionService;
@@ -56,6 +57,24 @@ public class IntersectionController {
         int id = intersectionActivationDTO.intersectionId();
         Optional<Intersection> intersectionOpt = this.intersectionService.getIntersectionRepository().findById(id);
         intersectionOpt.ifPresent(intersection -> intersection.setLightsActive(intersectionActivationDTO.isActive(), lightService));
+    }
+
+    @PostMapping("/setSecondsForRoadAndColor")
+    public void setSeconds(@RequestBody IntersectionRoadSecondsDTO intersectionRoadSecondsDTO) {
+        Optional<Intersection> intersectionOpt = this.intersectionService.getIntersectionRepository().findById(intersectionRoadSecondsDTO.intersectionId());
+        if (intersectionOpt.isPresent()) {
+            Intersection intersection = intersectionOpt.get();
+            for (int roadNum = 0; roadNum < intersection.getRoads().size(); roadNum++) {
+                Road road = intersection.getRoads().get(roadNum);
+                if (road.getRoadId() == intersectionRoadSecondsDTO.roadId()) {
+                    for (int lightNum = 0; lightNum < road.getLights().size(); lightNum++) {
+                        LightConfiguration lightConfiguration = intersection.getLightConfigurationForRoadAndLight(roadNum, lightNum);
+                        lightConfiguration.setSecondsForColor(intersectionRoadSecondsDTO.seconds(), intersectionRoadSecondsDTO.lightColor());
+                        intersection.setLightConfigurationForRoadAndLight(lightConfiguration, roadNum, lightNum, this.lightService);
+                    }
+                }
+            }
+        }
     }
 
     private List<Light> makeLights(int numLights, boolean active, LightColor color, boolean isSynchronized) {

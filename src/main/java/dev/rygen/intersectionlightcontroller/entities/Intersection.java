@@ -53,6 +53,16 @@ public class Intersection {
         }
     }
 
+    public LightConfiguration getLightConfigurationForRoadAndLight(int roadNum, int lightNum) {
+        return this.roads.get(roadNum).getLights().get(lightNum).getLightConfiguration();
+    }
+
+    public void setLightConfigurationForRoadAndLight(LightConfiguration lightConfiguration, int roadNum, int lightNum, LightService lightService) {
+        Light light = this.roads.get(roadNum).getLights().get(lightNum);
+        light.setLightConfiguration(lightConfiguration);
+        lightService.getLightRepository().save(light);
+    }
+
     public String lightsString() {
         String str = "";
         for (Road road : roads) {

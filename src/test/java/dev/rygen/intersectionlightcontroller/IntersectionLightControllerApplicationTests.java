@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import dev.rygen.intersectionlightcontroller.controllers.IntersectionController;
 import dev.rygen.intersectionlightcontroller.entities.Light;
+import dev.rygen.intersectionlightcontroller.entities.LightConfiguration;
 import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import dev.rygen.intersectionlightcontroller.services.IntersectionService;
 import dev.rygen.intersectionlightcontroller.services.LightService;
@@ -111,5 +112,31 @@ class IntersectionLightControllerApplicationTests {
 			intersectionService.getIntersectionRepository().findAll().get(0).tick(lightService);
 		}
 		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
+	}
+
+	@Test
+	void getAndSetLightConfiguration() {
+		IntersectionController intersectionController = new IntersectionController(intersectionService, roadService, lightService);
+		intersectionController.createIntersection(null);
+		LightConfiguration lightConfiguration00 = intersectionService.getIntersectionRepository().findAll().get(0).getLightConfigurationForRoadAndLight(0, 0);
+
+		assertEquals(5, lightConfiguration00.getRedSeconds());
+		assertEquals(2, lightConfiguration00.getYellowSeconds());
+		assertEquals(3, lightConfiguration00.getGreenSeconds());
+
+		LightConfiguration newLightConfiguration = LightConfiguration.builder().redSeconds(8).yellowSeconds(7).greenSeconds(6).build();
+		intersectionService.getIntersectionRepository().findAll().get(0).setLightConfigurationForRoadAndLight(newLightConfiguration, 0, 0, lightService);
+
+		lightConfiguration00 = intersectionService.getIntersectionRepository().findAll().get(0).getLightConfigurationForRoadAndLight(0, 0);
+
+		assertEquals(8, lightConfiguration00.getRedSeconds());
+		assertEquals(7, lightConfiguration00.getYellowSeconds());
+		assertEquals(6, lightConfiguration00.getGreenSeconds());
+
+		LightConfiguration lightConfiguration11 = intersectionService.getIntersectionRepository().findAll().get(0).getLightConfigurationForRoadAndLight(1, 1);
+
+		assertEquals(5, lightConfiguration11.getRedSeconds());
+		assertEquals(2, lightConfiguration11.getYellowSeconds());
+		assertEquals(3, lightConfiguration11.getGreenSeconds());
 	}
 }

@@ -33,17 +33,21 @@ public class IntersectionController {
 
     @PostMapping
     public void createIntersection(@RequestBody IntersectionDTO intersectionDto) {
-        List<Road> roads = makeRoads(makeLights(2, true, LightColor.RED), makeLights(2, false, LightColor.RED));
+        createIntersection(true);
+    }
+
+    public void createIntersection(boolean isSynchronized) {
+        List<Road> roads = makeRoads(makeLights(2, true, LightColor.RED, isSynchronized), makeLights(2, true, LightColor.RED, isSynchronized));
         Intersection intersection = Intersection.builder()
                 .roads(roads)
                 .build();
         this.intersectionService.createIntersection(intersection);
     }
 
-    private List<Light> makeLights(int numLights, boolean active, LightColor color) {
+    private List<Light> makeLights(int numLights, boolean active, LightColor color, boolean isSynchronized) {
         List<Light> lights = new ArrayList<Light>();
         for (int i = 0; i < numLights; i++) {
-            LightConfiguration lightConfiguration = LightConfiguration.builder().redSeconds(5).yellowSeconds(2).greenSeconds(3).build();
+            LightConfiguration lightConfiguration = LightConfiguration.builder().redSeconds(5).yellowSeconds(2).greenSeconds(3).isSynchronized(isSynchronized).build();
             Light light = Light.builder().active(active).lightColor(color).lightConfiguration(lightConfiguration).build();
             this.lightService.createLight(light);
             lights.add(light);

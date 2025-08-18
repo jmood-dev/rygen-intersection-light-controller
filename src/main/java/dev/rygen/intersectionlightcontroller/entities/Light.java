@@ -44,7 +44,8 @@ public class Light {
 
     public void tick(LightService lightService) {
         //Lights that are not active should not tick
-        if (!active)
+        //Synchronized red lights wait for the other road to turn red
+        if (!active || lightConfiguration.isSynchronized() && lightColor == LightColor.RED)
             return;
 
         secondsOnColor++;

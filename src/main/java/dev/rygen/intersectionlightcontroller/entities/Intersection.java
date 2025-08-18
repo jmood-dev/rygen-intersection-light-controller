@@ -14,6 +14,7 @@ import lombok.Builder;
 import java.util.List;
 import java.util.Objects;
 
+import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import dev.rygen.intersectionlightcontroller.services.LightService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,9 +40,49 @@ public class Intersection {
     private boolean active;
 
     public void tick(LightService lightService) {
+        ensureOnlyOneRoadNotRed(lightService);
+        int initialNumOfRoadNotRed = numOfRoadNotRed();
+
         for (Road road : this.roads) {
             road.tick(lightService);
         }
+
+        ensureOnlyOneRoadNotRed(lightService);
+        int finalNumOfRoadNotRed = numOfRoadNotRed();
+
+        //both roads are red
+        if (finalNumOfRoadNotRed == -1) {
+            if (initialNumOfRoadNotRed > -1 && this.roads.get(1-initialNumOfRoadNotRed).hasSynchronizedLight()) {
+                //if there is a road that just changed to red, set the other road to green
+                this.roads.get(1-initialNumOfRoadNotRed).setLightsColor(LightColor.GREEN, lightService);
+            } else {
+                //if both roads started red, just set one of them to green
+                for (int i = 0; i < this.roads.size(); i++) {
+                    Road road = this.roads.get(i);
+                    if (road.hasSynchronizedLight() && !road.hasGreenOrYellowLight()) {
+                        road.setLightsColor(LightColor.GREEN, lightService);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void ensureOnlyOneRoadNotRed(LightService lightService) {
+        for (int i = 0; i < this.roads.size(); i++) {
+            if (this.roads.get(i).hasSynchronizedLight() && this.roads.get(1-i).hasGreenOrYellowLight()) {
+                this.roads.get(i).setLightsColor(LightColor.RED, lightService);
+            }
+        }
+    }
+
+    private int numOfRoadNotRed() {
+        for (int i = 0; i < this.roads.size(); i++) {
+            if (this.roads.get(i).hasGreenOrYellowLight()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public void setLightsActive(boolean isActive, LightService lightService) {

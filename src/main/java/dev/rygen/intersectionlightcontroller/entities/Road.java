@@ -14,6 +14,7 @@ import lombok.Builder;
 import java.util.List;
 import java.util.Objects;
 
+import dev.rygen.intersectionlightcontroller.enums.LightColor;
 import dev.rygen.intersectionlightcontroller.services.LightService;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,31 @@ public class Road {
     public void tick(LightService lightService) {
         for (Light light : this.lights) {
             light.tick(lightService);
+        }
+    }
+
+    public boolean hasGreenOrYellowLight() {
+        for (Light light : lights) {
+            if (light.getLightColor() == LightColor.GREEN || light.getLightColor() == LightColor.YELLOW) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasSynchronizedLight() {
+        for (Light light : lights) {
+            if (light.getLightConfiguration().isSynchronized()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setLightsColor(LightColor lightColor, LightService lightService) {
+        for (Light light : lights) {
+            light.setLightColor(lightColor);
+            lightService.getLightRepository().save(light);
         }
     }
 }

@@ -38,6 +38,9 @@ public class LightConfiguration implements Serializable {
     @Column(name = "green_seconds")
     private int greenSeconds;
 
+    @Column(name = "is_synchronized")
+    private boolean isSynchronized;
+
     public int secondsForColor(LightColor lightColor) {
         switch (lightColor) {
             case RED:

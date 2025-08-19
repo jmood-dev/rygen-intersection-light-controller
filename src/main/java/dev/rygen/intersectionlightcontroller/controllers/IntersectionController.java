@@ -76,11 +76,16 @@ public class IntersectionController {
             for (int roadNum = 0; roadNum < intersection.getRoads().size(); roadNum++) {
                 Road road = intersection.getRoads().get(roadNum);
                 if (road.getRoadId() == intersectionRoadSecondsDTO.roadId()) {
+                    if (intersectionRoadSecondsDTO.lightColor() == LightColor.GREEN)
+                        road.setGreenSeconds(intersectionRoadSecondsDTO.seconds());
+                    else if (intersectionRoadSecondsDTO.lightColor() == LightColor.YELLOW)
+                        road.setYellowSeconds(intersectionRoadSecondsDTO.seconds());
                     for (int lightNum = 0; lightNum < road.getLights().size(); lightNum++) {
                         LightConfiguration lightConfiguration = intersection.getLightConfigurationForRoadAndLight(roadNum, lightNum);
                         lightConfiguration.setSecondsForColor(intersectionRoadSecondsDTO.seconds(), intersectionRoadSecondsDTO.lightColor());
                         intersection.setLightConfigurationForRoadAndLight(lightConfiguration, roadNum, lightNum, this.lightService);
                     }
+                    this.roadService.getRoadRepository().save(road);
                 }
             }
         }
@@ -100,7 +105,8 @@ public class IntersectionController {
     private List<Road> makeRoads(List<Light>... lightLists) {
         List<Road> roads = new ArrayList<Road>();
         for (List<Light> lightList : lightLists) {
-            Road road = Road.builder().lights(lightList).build();
+            Road road = Road.builder().lights(lightList).greenSeconds(lightList.get(0).getLightConfiguration().getGreenSeconds())
+                .yellowSeconds(lightList.get(0).getLightConfiguration().getYellowSeconds()).build();
             this.roadService.createRoad(road);
             roads.add(road);
         }

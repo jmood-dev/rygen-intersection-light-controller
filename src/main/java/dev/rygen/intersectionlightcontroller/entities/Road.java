@@ -36,6 +36,12 @@ public class Road {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Light> lights;
 
+    @Column(name = "yellow_seconds")
+    private int yellowSeconds;
+
+    @Column(name = "green_seconds")
+    private int greenSeconds;
+
     public void tick(LightService lightService) {
         for (Light light : this.lights) {
             light.tick(lightService);

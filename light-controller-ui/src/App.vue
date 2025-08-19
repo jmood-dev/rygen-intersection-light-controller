@@ -76,11 +76,11 @@ onMounted(() => {
         </span>
         <span>
           <label>
-            <input type="text" size="2" @change="setColorSeconds($event, intersection, road, LightColor.GREEN)" >
+            <input type="text" size="2" v-model="road.greenSeconds" @change="setColorSeconds($event, intersection, road, LightColor.GREEN)" >
             Green Seconds
           </label>
           <label>
-            <input type="text" size="2" @change="setColorSeconds($event, intersection, road, LightColor.YELLOW)" >
+            <input type="text" size="2" v-model="road.yellowSeconds" @change="setColorSeconds($event, intersection, road, LightColor.YELLOW)" >
             Yellow Seconds
           </label>
         </span>

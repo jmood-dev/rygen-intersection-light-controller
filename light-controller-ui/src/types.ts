@@ -7,6 +7,8 @@ export interface Intersection {
 export interface Road {
   roadId: number;
   lights: Light[];
+  greenSeconds: number;
+  yellowSeconds: number;
 }
 
 export interface Light {

@@ -2,14 +2,7 @@
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { LightColor, type Intersection, type Road } from './types'
-const activeLight = ref<string>('red')
 const intersections = ref<Intersection[]>([])
-
-const handleActiveLightChange = () => {
-  axios.post('http://localhost:8080/intersections', { activeLight: activeLight.value })
-    .then(console.log)
-    .catch(console.error)
-}
 
 function addIntersection() {
   axios.post('http://localhost:8080/intersections/create')
@@ -85,24 +78,6 @@ onMounted(() => {
           </label>
         </div>
       </div>
-    </div>
-    <div class="light-controller">
-      <div class="light">
-        <label>
-          <input type="radio" value="red" class="red" v-model="activeLight" name="light"
-            @change="handleActiveLightChange" /> Red
-        </label>
-        <label>
-          <input type="radio" value="yellow" class="yellow" v-model="activeLight" name="light"
-            @change="handleActiveLightChange" /> Yellow
-        </label>
-        <label>
-          <input type="radio" value="green" class="green" v-model="activeLight" name="light"
-            @change="handleActiveLightChange" /> Green
-        </label>
-      </div>
-
-      <p>Active light: {{ activeLight }}</p>
     </div>
   </main>
 </template>

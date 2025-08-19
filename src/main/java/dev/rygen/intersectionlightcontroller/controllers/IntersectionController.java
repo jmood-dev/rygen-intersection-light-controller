@@ -1,6 +1,5 @@
 package dev.rygen.intersectionlightcontroller.controllers;
 
-import dev.rygen.intersectionlightcontroller.dtos.IntersectionDTO;
 import dev.rygen.intersectionlightcontroller.dtos.IntersectionRoadSecondsDTO;
 import dev.rygen.intersectionlightcontroller.dtos.IntersectionActivationDTO;
 import dev.rygen.intersectionlightcontroller.entities.Intersection;
@@ -37,11 +36,6 @@ public class IntersectionController {
     @GetMapping
     public List<Intersection> getIntersections() {
         return this.intersectionService.getIntersectionRepository().findAll();
-    }
-
-    @PostMapping
-    public void createIntersection(@RequestBody IntersectionDTO intersectionDto) {
-        createIntersection(true);
     }
 
     @PostMapping("/create")

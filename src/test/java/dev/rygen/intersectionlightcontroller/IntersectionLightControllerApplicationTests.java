@@ -143,7 +143,7 @@ class IntersectionLightControllerApplicationTests {
 	@Test
 	void synchronizedLights() {
 		IntersectionController intersectionController = new IntersectionController(intersectionService, roadService, lightService);
-		intersectionController.createIntersection(null);
+		intersectionController.createIntersection();
 
 		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(0).getLights().get(0).getLightColor());
 		assertEquals(LightColor.RED, intersectionService.getIntersectionRepository().findAll().get(0).getRoads().get(1).getLights().get(0).getLightColor());

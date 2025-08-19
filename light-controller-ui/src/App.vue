@@ -62,28 +62,28 @@ onMounted(() => {
   </header>
 
   <main>
-    <div>
+    <div class="addIntersectionDiv">
       <button @click="addIntersection" >Add Intersection</button>
     </div>
-    <div v-for="intersection in intersections" style="border: 1px black solid;">
-      <label>
+    <div v-for="intersection in intersections" class="intersectionDiv">
+      <label class="activeCheckboxLabel">
         <input type="checkbox" v-model="intersection.active" @change="setIntersectionActive(intersection)">
         Active
       </label>
       <div v-for="road in intersection.roads">
         <span v-for="light in road.lights">
-          {{ light.active ? light.lightColor + " " : "Off " }}
+          <img class="stoplight" :class="{ offStoplight: !light.active, greenStoplight: light.lightColor=='GREEN', yellowStoplight: light.lightColor=='YELLOW', redStoplight: light.lightColor=='RED' }" src="/stoplights.png" >
         </span>
-        <span>
-          <label>
+        <div class="configDiv">
+          <label class="configLabel">
             <input type="text" size="2" v-model="road.greenSeconds" @change="setColorSeconds($event, intersection, road, LightColor.GREEN)" >
             Green Seconds
           </label>
-          <label>
+          <label class="configLabel">
             <input type="text" size="2" v-model="road.yellowSeconds" @change="setColorSeconds($event, intersection, road, LightColor.YELLOW)" >
             Yellow Seconds
           </label>
-        </span>
+        </div>
       </div>
     </div>
     <div class="light-controller">
@@ -141,6 +141,53 @@ header {
     gap: .5rem;
   }
 
+}
+
+.stoplight {
+  width: 46px;
+  height: 96px;
+  object-fit: cover;
+  transition: none;
+}
+
+.stoplight.greenStoplight {
+  object-position: 6px 0%;
+}
+
+.stoplight.yellowStoplight {
+  object-position: -46px 0%;
+}
+
+.stoplight.redStoplight {
+  object-position: -98.5px 0%;
+}
+
+.stoplight.offStoplight {
+  object-position: -152px 0%;
+}
+
+.addIntersectionDiv {
+  margin-bottom: 5px;
+}
+
+.activeCheckboxLabel {
+  margin-left: 7px;
+}
+
+.intersectionDiv {
+  border: 1px black solid;
+  margin-bottom: 5px;
+}
+
+.configDiv {
+  display: inline-block;
+  position: relative;
+  bottom: 55px;
+  left: 5px;
+}
+
+.configLabel {
+  display: block;
 }
 
 input[type='radio'].red {

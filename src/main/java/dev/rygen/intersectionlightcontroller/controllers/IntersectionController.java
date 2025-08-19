@@ -34,6 +34,11 @@ public class IntersectionController {
         this.lightService = lightService;
     }
 
+    @GetMapping
+    public List<Intersection> getIntersections() {
+        return this.intersectionService.getIntersectionRepository().findAll();
+    }
+
     @PostMapping
     public void createIntersection(@RequestBody IntersectionDTO intersectionDto) {
         createIntersection(true);
@@ -47,7 +52,7 @@ public class IntersectionController {
     public Intersection createIntersection(boolean isSynchronized) {
         List<Road> roads = makeRoads(makeLights(2, true, LightColor.RED, isSynchronized), makeLights(2, true, LightColor.RED, isSynchronized));
         Intersection intersection = Intersection.builder()
-                .roads(roads)
+                .roads(roads).active(true)
                 .build();
         return this.intersectionService.createIntersection(intersection);
     }
@@ -56,7 +61,11 @@ public class IntersectionController {
     public void setActive(@RequestBody IntersectionActivationDTO intersectionActivationDTO) {
         int id = intersectionActivationDTO.intersectionId();
         Optional<Intersection> intersectionOpt = this.intersectionService.getIntersectionRepository().findById(id);
-        intersectionOpt.ifPresent(intersection -> intersection.setLightsActive(intersectionActivationDTO.isActive(), lightService));
+        intersectionOpt.ifPresent(intersection -> {
+            intersection.setActive(intersectionActivationDTO.isActive());
+            intersection.setLightsActive(intersectionActivationDTO.isActive(), lightService);
+            intersectionService.getIntersectionRepository().save(intersection);
+        });
     }
 
     @PostMapping("/setSecondsForRoadAndColor")

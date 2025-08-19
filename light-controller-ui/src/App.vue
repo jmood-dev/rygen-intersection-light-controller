@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { LightColor, type Intersection, type Road } from './types'
 const activeLight = ref<string>('red')
@@ -41,6 +41,17 @@ function setColorSeconds(event:Event, intersection:Intersection, road:Road, ligh
     .catch(console.error)
 }
 
+onMounted(() => {
+  const intersectionPollingInterval = setInterval(() => {
+    axios.get('http://localhost:8080/intersections')
+      .then(response => {
+        intersections.value.length = 0
+        intersections.value.push(...response.data)
+      })
+      .catch(console.error)
+  }, 1000);
+})
+
 </script>
 
 <template>
@@ -61,7 +72,7 @@ function setColorSeconds(event:Event, intersection:Intersection, road:Road, ligh
       </label>
       <div v-for="road in intersection.roads">
         <span v-for="light in road.lights">
-          {{ light.lightColor + " " }}
+          {{ light.active ? light.lightColor + " " : "Off " }}
         </span>
         <span>
           <label>
